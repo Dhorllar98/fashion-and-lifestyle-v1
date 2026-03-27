@@ -14,17 +14,15 @@ const STAGES = [
 function formatDate(iso?: string) {
   if (!iso) return '—'
   return new Date(iso).toLocaleDateString('en-NG', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+    day: 'numeric', month: 'long', year: 'numeric',
   })
 }
 
 export default function OrderTracking() {
-  const [query, setQuery] = useState('')
-  const [order, setOrder] = useState<OrderTrackingResult | null>(null)
+  const [query,   setQuery]   = useState('')
+  const [order,   setOrder]   = useState<OrderTrackingResult | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error,   setError]   = useState('')
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,8 +33,9 @@ export default function OrderTracking() {
     try {
       const result = await ordersApi.track(query.trim())
       setOrder(result)
-    } catch {
-      setError('Order not found. Please check your order number.')
+    } catch (err) {
+      // Show exact message from API (e.g. "No order found with number 'FAL-2024-9999'")
+      setError(err instanceof Error ? err.message : 'Order not found.')
     } finally {
       setLoading(false)
     }
@@ -69,7 +68,7 @@ export default function OrderTracking() {
           <div className="flex gap-0 border-b border-fl-subtle focus-within:border-fl-accent transition-colors duration-300">
             <input
               value={query}
-              onChange={e => setQuery(e.target.value)}
+              onChange={e => { setQuery(e.target.value); setError('') }}
               className="flex-1 bg-transparent text-fl-text text-sm py-3 px-0 placeholder-fl-subtle/50 focus:outline-none"
               placeholder="e.g. FAL-2024-0001"
             />
@@ -83,8 +82,11 @@ export default function OrderTracking() {
           </div>
         </form>
 
+        {/* Error — exact message from API */}
         {error && (
-          <p className="text-red-400 text-xs uppercase tracking-widest mb-10">{error}</p>
+          <div className="border-l-2 border-red-400 pl-4 py-1 mb-10">
+            <p className="text-red-400 text-xs leading-relaxed">{error}</p>
+          </div>
         )}
 
         {/* Result */}
@@ -99,9 +101,7 @@ export default function OrderTracking() {
                 <p className="font-serif text-2xl font-semibold text-fl-text">
                   {order.orderNumber}
                 </p>
-                <p className="text-xs text-fl-subtle mt-1">
-                  {order.clientName}
-                </p>
+                <p className="text-xs text-fl-subtle mt-1">{order.clientName}</p>
               </div>
               <span className="text-xs font-semibold uppercase tracking-widest text-fl-accent border border-fl-accent px-4 py-2 mt-1">
                 {OrderStatusLabel[order.status]}
@@ -110,20 +110,13 @@ export default function OrderTracking() {
 
             {/* Progress tracker */}
             <div className="mb-14">
-              <p className="text-xs uppercase tracking-widest text-fl-subtle mb-8">
-                Progress
-              </p>
+              <p className="text-xs uppercase tracking-widest text-fl-subtle mb-8">Progress</p>
               <div className="relative">
-                {/* Track line */}
                 <div className="absolute top-3 left-0 right-0 h-px bg-fl-muted" />
                 <div
                   className="absolute top-3 left-0 h-px bg-fl-accent transition-all duration-500"
-                  style={{
-                    width: `${(currentStageIndex / (STAGES.length - 1)) * 100}%`,
-                  }}
+                  style={{ width: `${(currentStageIndex / (STAGES.length - 1)) * 100}%` }}
                 />
-
-                {/* Stage dots */}
                 <div className="relative flex justify-between">
                   {STAGES.map((stage, i) => {
                     const done = i <= currentStageIndex
@@ -131,9 +124,7 @@ export default function OrderTracking() {
                       <div key={stage} className="flex flex-col items-center gap-4">
                         <div
                           className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                            done
-                              ? 'bg-fl-accent border-fl-accent'
-                              : 'bg-fl-base border-fl-muted'
+                            done ? 'bg-fl-accent border-fl-accent' : 'bg-fl-base border-fl-muted'
                           }`}
                         >
                           {i < currentStageIndex && (
@@ -147,9 +138,7 @@ export default function OrderTracking() {
                         </div>
                         <span
                           className={`text-xs text-center leading-tight max-w-[60px] transition-colors duration-300 ${
-                            done
-                              ? 'text-fl-text font-semibold uppercase tracking-wide'
-                              : 'text-fl-subtle/60 font-light'
+                            done ? 'text-fl-text font-semibold uppercase tracking-wide' : 'text-fl-subtle/60 font-light'
                           }`}
                           style={{ fontSize: '10px' }}
                         >
@@ -166,38 +155,24 @@ export default function OrderTracking() {
             {order.trackingNote && (
               <div className="bg-fl-muted px-6 py-5 mb-10 border-l-2 border-fl-accent">
                 <p className="text-xs uppercase tracking-widest text-fl-accent mb-2">Note</p>
-                <p className="text-sm text-fl-text font-light leading-relaxed">
-                  {order.trackingNote}
-                </p>
+                <p className="text-sm text-fl-text font-light leading-relaxed">{order.trackingNote}</p>
               </div>
             )}
 
             {/* Dates */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
               <div>
-                <p className="text-xs uppercase tracking-widest text-fl-subtle mb-2">
-                  Order Date
-                </p>
-                <p className="font-serif text-lg font-semibold text-fl-text">
-                  {formatDate(order.orderDate)}
-                </p>
+                <p className="text-xs uppercase tracking-widest text-fl-subtle mb-2">Order Date</p>
+                <p className="font-serif text-lg font-semibold text-fl-text">{formatDate(order.orderDate)}</p>
               </div>
               <div>
-                <p className="text-xs uppercase tracking-widest text-fl-subtle mb-2">
-                  Est. Delivery
-                </p>
-                <p className="font-serif text-lg font-semibold text-fl-text">
-                  {formatDate(order.estimatedDelivery)}
-                </p>
+                <p className="text-xs uppercase tracking-widest text-fl-subtle mb-2">Est. Delivery</p>
+                <p className="font-serif text-lg font-semibold text-fl-text">{formatDate(order.estimatedDelivery)}</p>
               </div>
               {order.deliveredAt && (
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-fl-subtle mb-2">
-                    Delivered
-                  </p>
-                  <p className="font-serif text-lg font-semibold text-fl-accent">
-                    {formatDate(order.deliveredAt)}
-                  </p>
+                  <p className="text-xs uppercase tracking-widest text-fl-subtle mb-2">Delivered</p>
+                  <p className="font-serif text-lg font-semibold text-fl-accent">{formatDate(order.deliveredAt)}</p>
                 </div>
               )}
             </div>

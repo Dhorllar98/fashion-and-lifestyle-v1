@@ -1,3 +1,4 @@
+// ── Catalogue ──────────────────────────────────────────────────────────────────
 export interface Design {
   id: number
   name: string
@@ -8,9 +9,12 @@ export interface Design {
   availableColors: string[]
   availableFabrics: string[]
   isAvailable: boolean
+  isOutOfStock: boolean
+  stockQuantity: number
   createdAt: string
 }
 
+// ── Measurements ───────────────────────────────────────────────────────────────
 export interface Measurement {
   id?: number
   clientName: string
@@ -26,20 +30,21 @@ export interface Measurement {
   submittedAt?: string
 }
 
+// ── Orders ─────────────────────────────────────────────────────────────────────
 export enum OrderStatus {
   InProduction = 0,
-  Ready = 1,
-  Dispatched = 2,
-  InTransit = 3,
-  Delivered = 4,
+  Ready        = 1,
+  Dispatched   = 2,
+  InTransit    = 3,
+  Delivered    = 4,
 }
 
 export const OrderStatusLabel: Record<OrderStatus, string> = {
   [OrderStatus.InProduction]: 'In Production',
-  [OrderStatus.Ready]: 'Ready',
-  [OrderStatus.Dispatched]: 'Dispatched',
-  [OrderStatus.InTransit]: 'In Transit',
-  [OrderStatus.Delivered]: 'Delivered',
+  [OrderStatus.Ready]:        'Ready',
+  [OrderStatus.Dispatched]:   'Dispatched',
+  [OrderStatus.InTransit]:    'In Transit',
+  [OrderStatus.Delivered]:    'Delivered',
 }
 
 export interface Order {
@@ -53,6 +58,7 @@ export interface Order {
   measurementId: number
   selectedColor: string
   selectedFabric: string
+  quantity: number
   totalAmount: number
   isPaid: boolean
   paymentReference?: string
@@ -67,6 +73,7 @@ export interface OrderTrackingResult {
   orderNumber: string
   clientName: string
   status: OrderStatus
+  statusLabel: string
   trackingNote?: string
   orderDate: string
   estimatedDelivery?: string
@@ -81,5 +88,27 @@ export interface CreateOrderPayload {
   measurementId: number
   selectedColor: string
   selectedFabric: string
-  totalAmount: number
+  quantity: number
+}
+
+// ── Auth ───────────────────────────────────────────────────────────────────────
+export interface RegisterPayload {
+  fullName: string
+  email: string
+  phone: string
+  password: string
+}
+
+export interface LoginPayload {
+  email: string
+  password: string
+}
+
+export interface AuthResponse {
+  userId: number
+  fullName: string
+  email: string
+  role: string
+  token: string
+  expiresAt: string
 }

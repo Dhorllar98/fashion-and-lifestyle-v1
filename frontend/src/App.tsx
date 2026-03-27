@@ -8,22 +8,25 @@ import Measurements from '@/pages/Measurements'
 import Checkout from '@/pages/Checkout'
 import OrderTracking from '@/pages/OrderTracking'
 import OrderConfirmation from '@/pages/OrderConfirmation'
+import Register from '@/pages/Register'
+import Login from '@/pages/Login'
 
 function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen flex flex-col">
         <Navbar />
-        {/* pt-[72px] offsets the fixed navbar on all non-hero pages; Home manages its own top spacing */}
         <main className="flex-1">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/catalogue" element={<Catalogue />} />
-            <Route path="/catalogue/:id" element={<DesignDetail />} />
-            <Route path="/measurements" element={<Measurements />} />
-            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/"                   element={<Home />} />
+            <Route path="/catalogue"          element={<Catalogue />} />
+            <Route path="/catalogue/:id"      element={<DesignDetail />} />
+            <Route path="/measurements"       element={<Measurements />} />
+            <Route path="/checkout"           element={<Checkout />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
-            <Route path="/track" element={<OrderTracking />} />
+            <Route path="/track"              element={<OrderTracking />} />
+            <Route path="/register"           element={<Register />} />
+            <Route path="/login"              element={<Login />} />
           </Routes>
         </main>
         <Footer />

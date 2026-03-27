@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { measurementsApi } from '@/services/api'
+import { getUser, isLoggedIn } from '@/lib/auth'
 import type { Measurement } from '@/types'
 
 type FormData = Omit<Measurement, 'id' | 'submittedAt'>
@@ -13,20 +14,33 @@ const initialForm: FormData = {
 }
 
 const measurementFields: { key: keyof FormData; label: string }[] = [
-  { key: 'chest', label: 'Chest' },
-  { key: 'waist', label: 'Waist' },
-  { key: 'hips', label: 'Hips' },
-  { key: 'shoulderWidth', label: 'Shoulder Width' },
+  { key: 'chest',        label: 'Chest' },
+  { key: 'waist',        label: 'Waist' },
+  { key: 'hips',         label: 'Hips' },
+  { key: 'shoulderWidth',label: 'Shoulder Width' },
   { key: 'sleeveLength', label: 'Sleeve Length' },
   { key: 'inseamLength', label: 'Inseam Length' },
-  { key: 'height', label: 'Height' },
+  { key: 'height',       label: 'Height' },
 ]
 
 export default function Measurements() {
   const navigate = useNavigate()
-  const [form, setForm] = useState<FormData>(initialForm)
+  const [form, setForm]       = useState<FormData>(initialForm)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError]     = useState('')
+
+  useEffect(() => {
+    // Guard: must be logged in to submit measurements
+    if (!isLoggedIn()) {
+      navigate('/register', { replace: true })
+      return
+    }
+    // Pre-fill contact info from auth
+    const user = getUser()
+    if (user) {
+      setForm(f => ({ ...f, clientName: user.fullName, clientEmail: user.email }))
+    }
+  }, [navigate])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -41,8 +55,8 @@ export default function Measurements() {
       const measurement = await measurementsApi.submit(form)
       sessionStorage.setItem('measurementId', String(measurement.id))
       navigate('/checkout')
-    } catch {
-      setError('Failed to submit measurements. Please try again.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to submit measurements.')
     } finally {
       setLoading(false)
     }
@@ -106,7 +120,8 @@ export default function Measurements() {
           {/* Measurement fields */}
           <div className="mb-16">
             <p className="text-xs font-semibold uppercase tracking-widest text-fl-text mb-10">
-              Body Measurements <span className="text-fl-subtle font-light normal-case tracking-normal ml-2">(cm)</span>
+              Body Measurements{' '}
+              <span className="text-fl-subtle font-light normal-case tracking-normal ml-2">(cm)</span>
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-12 gap-y-10">
               {measurementFields.map(({ key, label }) => (
@@ -133,7 +148,8 @@ export default function Measurements() {
           {/* Notes */}
           <div className="mb-16">
             <label className="block text-xs uppercase tracking-widest text-fl-subtle mb-3">
-              Additional Notes <span className="normal-case tracking-normal text-fl-subtle/60 ml-1">(optional)</span>
+              Additional Notes{' '}
+              <span className="normal-case tracking-normal text-fl-subtle/60 ml-1">(optional)</span>
             </label>
             <textarea
               name="notes"
@@ -145,8 +161,13 @@ export default function Measurements() {
             />
           </div>
 
+          {/* Error — exact message from API */}
           {error && (
-            <p className="text-red-400 text-xs uppercase tracking-widest mb-8">{error}</p>
+            <div className="border-l-2 border-red-400 pl-4 py-1 mb-8">
+              {error.split(' | ').map((msg, i) => (
+                <p key={i} className="text-red-400 text-xs leading-relaxed">{msg}</p>
+              ))}
+            </div>
           )}
 
           <div className="flex items-center gap-8">
