@@ -1,6 +1,4 @@
-using System.Net;
 using System.Text.Json;
-using FashionLifestyle.API.Application.Common.Responses;
 using FashionLifestyle.API.Domain.Exceptions;
 
 namespace FashionLifestyle.API.Middleware;
@@ -9,6 +7,11 @@ public class ExceptionMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionMiddleware> _logger;
+
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
 
     public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
@@ -25,64 +28,33 @@ public class ExceptionMiddleware
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception on {Method} {Path}", context.Request.Method, context.Request.Path);
-            await HandleExceptionAsync(context, ex);
+            await WriteErrorAsync(context, ex);
         }
     }
 
-    private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private static async Task WriteErrorAsync(HttpContext context, Exception exception)
     {
+        var (statusCode, message) = exception switch
+        {
+            ValidationException ve  => (400, ve.Errors.Count == 1
+                                            ? ve.Errors[0]
+                                            : string.Join(" | ", ve.Errors)),
+            NotFoundException nfe   => (404, nfe.Message),
+            OutOfStockException ose => (422, ose.Message),
+            UnauthorizedException ue => (401, ue.Message),
+            _                       => (500, exception.Message)
+        };
+
         context.Response.ContentType = "application/json";
+        context.Response.StatusCode  = statusCode;
 
-        ApiBaseResponse<object> response;
-
-        switch (exception)
+        var body = JsonSerializer.Serialize(new
         {
-            case ValidationException ve:
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                response = new ApiBaseResponse<object>
-                {
-                    Success = false,
-                    Message = "Validation failed.",
-                    Errors = ve.Errors.ToList()
-                };
-                break;
+            success    = false,
+            message,
+            statusCode
+        }, _jsonOptions);
 
-            case NotFoundException nfe:
-                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                response = new ApiBaseResponse<object>
-                {
-                    Success = false,
-                    Message = nfe.Message,
-                    Errors = new List<string> { nfe.Message }
-                };
-                break;
-
-            case OutOfStockException ose:
-                context.Response.StatusCode = (int)HttpStatusCode.UnprocessableEntity;
-                response = new ApiBaseResponse<object>
-                {
-                    Success = false,
-                    Message = ose.Message,
-                    Errors = new List<string> { ose.Message }
-                };
-                break;
-
-            default:
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                response = new ApiBaseResponse<object>
-                {
-                    Success = false,
-                    Message = "An unexpected error occurred. Please try again later.",
-                    Errors = new List<string> { "Internal server error." }
-                };
-                break;
-        }
-
-        var json = JsonSerializer.Serialize(response, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        });
-
-        await context.Response.WriteAsync(json);
+        await context.Response.WriteAsync(body);
     }
 }

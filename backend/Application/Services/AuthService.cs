@@ -8,6 +8,7 @@ using FashionLifestyle.API.Domain.Entities;
 using FashionLifestyle.API.Domain.Enums;
 using FashionLifestyle.API.Domain.Exceptions;
 using FashionLifestyle.API.Infrastructure.Persistence;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace FashionLifestyle.API.Application.Services;
@@ -16,11 +17,13 @@ public partial class AuthService : IAuthService
 {
     private readonly InMemoryStore _store;
     private readonly IAuditLogger _audit;
+    private readonly IConfiguration _config;
 
-    public AuthService(InMemoryStore store, IAuditLogger audit)
+    public AuthService(InMemoryStore store, IAuditLogger audit, IConfiguration config)
     {
         _store = store;
         _audit = audit;
+        _config = config;
     }
 
     public Task<AuthResponse> RegisterAsync(RegisterRequest request)
@@ -69,13 +72,19 @@ public partial class AuthService : IAuthService
         return Task.FromResult(new AuthResponse(user.Id, user.FullName, user.Email, user.Role.ToString(), token, expiresAt));
     }
 
-    private static (string Token, DateTime ExpiresAt) GenerateJwtToken(User user)
+    private (string Token, DateTime ExpiresAt) GenerateJwtToken(User user)
     {
         var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
-            ?? throw new InvalidOperationException("JWT_SECRET_KEY environment variable is not configured.");
+            ?? _config["Jwt:SecretKey"]
+            ?? throw new InvalidOperationException("JWT secret key is not configured.");
 
-        var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "FashionLifestyle";
-        var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "FashionLifestyle.Clients";
+        var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER")
+            ?? _config["Jwt:Issuer"]
+            ?? "FashionLifestyle";
+
+        var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE")
+            ?? _config["Jwt:Audience"]
+            ?? "FashionLifestyle.Clients";
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

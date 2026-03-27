@@ -10,14 +10,20 @@ using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── JWT configuration from environment variables ──────────────────────────────
+// ── JWT configuration — env vars take priority, appsettings.Development.json as fallback ──
 var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY")
+    ?? builder.Configuration["Jwt:SecretKey"]
     ?? throw new InvalidOperationException(
-        "JWT_SECRET_KEY environment variable is required. " +
-        "Set it via: $env:JWT_SECRET_KEY='your-secret-key-min-32-chars'");
+        "JWT secret key is not configured. " +
+        "Set JWT_SECRET_KEY env var (production) or Jwt:SecretKey in appsettings.Development.json (local).");
 
-var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "FashionLifestyle";
-var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "FashionLifestyle.Clients";
+var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER")
+    ?? builder.Configuration["Jwt:Issuer"]
+    ?? "FashionLifestyle";
+
+var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE")
+    ?? builder.Configuration["Jwt:Audience"]
+    ?? "FashionLifestyle.Clients";
 
 // ── Authentication & Authorization ───────────────────────────────────────────
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
