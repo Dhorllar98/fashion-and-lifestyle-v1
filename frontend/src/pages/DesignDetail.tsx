@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import { catalogueApi } from '@/services/api'
 import type { Design } from '@/types'
 
@@ -85,9 +85,20 @@ export default function DesignDetail() {
             <p className="text-sm text-fl-subtle font-light leading-relaxed mb-8">
               {design.description}
             </p>
-            <p className="font-serif text-3xl font-semibold text-fl-text mb-12">
+            <p className="font-serif text-3xl font-semibold text-fl-text mb-4">
               {formatPrice(design.price)}
             </p>
+
+            {design.isOutOfStock && (
+              <span className="inline-block text-xs font-semibold uppercase tracking-widest border border-red-300 text-red-400 px-4 py-2 mb-8">
+                Out of Stock
+              </span>
+            )}
+            {!design.isOutOfStock && (
+              <p className="text-xs text-fl-subtle/60 font-light mb-12">
+                {design.stockQuantity} unit{design.stockQuantity !== 1 ? 's' : ''} available
+              </p>
+            )}
 
             {/* Color selector */}
             <div className="mb-8">
@@ -133,12 +144,19 @@ export default function DesignDetail() {
               </div>
             </div>
 
-            <button onClick={handleOrder} className="btn-primary w-full text-center">
-              Order This Design
+            <button
+              onClick={handleOrder}
+              disabled={design.isOutOfStock}
+              className="btn-primary w-full text-center disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Order Now
             </button>
-            <p className="text-xs text-fl-subtle/60 mt-4 text-center font-light">
-              Next: submit your measurements for a perfect fit
-            </p>
+            <Link
+              to="/measurements"
+              className="block text-center text-xs font-semibold uppercase tracking-widest text-fl-subtle hover:text-fl-accent transition-colors duration-300 mt-5 py-3 border border-fl-muted hover:border-fl-accent"
+            >
+              Submit Measurements
+            </Link>
           </div>
         </div>
       </div>

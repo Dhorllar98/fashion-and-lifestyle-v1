@@ -90,7 +90,7 @@ export default function Login() {
         <p className="text-xs text-fl-subtle font-light mt-10 text-center">
           Don&apos;t have an account?{' '}
           <Link to="/register" className="text-fl-accent hover:text-fl-dark transition-colors duration-300">
-            Create one
+            Register
           </Link>
         </p>
 
