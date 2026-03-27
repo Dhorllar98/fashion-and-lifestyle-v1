@@ -1,18 +1,12 @@
-namespace FashionLifestyle.API.Models;
+using FashionLifestyle.API.Domain.Common;
+using FashionLifestyle.API.Domain.Enums;
 
-public enum OrderStatus
-{
-    InProduction,
-    Ready,
-    Dispatched,
-    InTransit,
-    Delivered
-}
+namespace FashionLifestyle.API.Domain.Entities;
 
-public class Order
+public class Order : AuditableEntity
 {
     public int Id { get; set; }
-    public string OrderNumber { get; set; } = string.Empty; // e.g. FAL-2024-0001
+    public string OrderNumber { get; set; } = string.Empty;
     public string ClientName { get; set; } = string.Empty;
     public string ClientEmail { get; set; } = string.Empty;
     public string ClientPhone { get; set; } = string.Empty;
@@ -25,6 +19,7 @@ public class Order
 
     public string SelectedColor { get; set; } = string.Empty;
     public string SelectedFabric { get; set; } = string.Empty;
+    public int Quantity { get; set; } = 1;
 
     public decimal TotalAmount { get; set; }
     public bool IsPaid { get; set; } = false;

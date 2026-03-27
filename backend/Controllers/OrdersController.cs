@@ -1,68 +1,56 @@
-using FashionLifestyle.API.Models;
-using FashionLifestyle.API.Services;
+using FashionLifestyle.API.Application.Common.Responses;
+using FashionLifestyle.API.Application.DTOs.Orders;
+using FashionLifestyle.API.Application.Interfaces;
+using FashionLifestyle.API.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FashionLifestyle.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class OrdersController : ControllerBase
 {
     private readonly IOrderService _orderService;
 
-    public OrdersController(IOrderService orderService)
-    {
-        _orderService = orderService;
-    }
+    public OrdersController(IOrderService orderService) => _orderService = orderService;
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Order order)
+    public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        var result = await _orderService.CreateOrderAsync(order);
-        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        var result = await _orderService.CreateOrderAsync(request);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id },
+            new OkResponse<Order>(result, "Order placed successfully."));
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         var order = await _orderService.GetOrderByIdAsync(id);
-        if (order is null) return NotFound();
-        return Ok(order);
+        return Ok(new OkResponse<Order>(order));
     }
 
     [HttpGet("track/{orderNumber}")]
+    [AllowAnonymous]
     public async Task<IActionResult> TrackOrder(string orderNumber)
     {
-        var order = await _orderService.GetOrderByNumberAsync(orderNumber);
-        if (order is null) return NotFound(new { message = "Order not found. Please check your order number." });
-        return Ok(new
-        {
-            order.OrderNumber,
-            order.ClientName,
-            order.Status,
-            order.TrackingNote,
-            order.OrderDate,
-            order.EstimatedDelivery,
-            order.DeliveredAt
-        });
+        var tracking = await _orderService.TrackOrderAsync(orderNumber);
+        return Ok(new OkResponse<OrderTrackingResponse>(tracking));
     }
 
     [HttpGet("client/{email}")]
     public async Task<IActionResult> GetByEmail(string email)
     {
         var orders = await _orderService.GetOrdersByEmailAsync(email);
-        return Ok(orders);
+        return Ok(new OkResponse<IEnumerable<Order>>(orders));
     }
 
     [HttpPatch("{id:int}/status")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusRequest request)
     {
         var order = await _orderService.UpdateOrderStatusAsync(id, request.Status, request.Note);
-        if (order is null) return NotFound();
-        return Ok(order);
+        return Ok(new OkResponse<Order>(order, "Order status updated."));
     }
 }
-
-public record UpdateStatusRequest(OrderStatus Status, string? Note);

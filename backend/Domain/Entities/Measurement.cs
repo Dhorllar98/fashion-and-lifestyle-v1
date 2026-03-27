@@ -1,12 +1,14 @@
-namespace FashionLifestyle.API.Models;
+using FashionLifestyle.API.Domain.Common;
 
-public class Measurement
+namespace FashionLifestyle.API.Domain.Entities;
+
+public class Measurement : AuditableEntity
 {
     public int Id { get; set; }
     public string ClientName { get; set; } = string.Empty;
     public string ClientEmail { get; set; } = string.Empty;
 
-    // Body measurements (in cm)
+    // Body measurements in cm
     public double Chest { get; set; }
     public double Waist { get; set; }
     public double Hips { get; set; }

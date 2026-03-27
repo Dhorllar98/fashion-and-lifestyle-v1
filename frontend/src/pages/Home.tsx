@@ -1,5 +1,29 @@
 import { Link } from 'react-router-dom'
 
+const lifestyles = [
+  {
+    id: 1,
+    tag: "Men's Traditional",
+    title: 'Agbada & Cap',
+    desc: 'Regal ceremonial wear reimagined for the modern man — rich fabric, impeccable drape.',
+    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4b3681?w=700&h=960&fit=crop&q=80',
+  },
+  {
+    id: 2,
+    tag: "Women's Wear",
+    title: 'Gown & Corporate',
+    desc: 'From flowing evening silhouettes to sharp boardroom elegance — dressed for every occasion.',
+    image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=700&h=960&fit=crop&q=80',
+  },
+  {
+    id: 3,
+    tag: 'Street Style',
+    title: 'Casual Together',
+    desc: 'Effortless couple fits — leather jackets, relaxed denim, and the kind of cool you just have.',
+    image: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=700&h=960&fit=crop&q=80',
+  },
+]
+
 const steps = [
   { step: '01', title: 'Browse Catalogue', desc: 'Explore our curated collection of designs and pick your style.' },
   { step: '02', title: 'Submit Measurements', desc: 'Enter your exact body measurements for a flawless fit.' },
@@ -51,6 +75,74 @@ export default function Home() {
         <div className="pb-10 flex flex-col items-center gap-2">
           <span className="text-xs uppercase tracking-widest font-light text-fl-subtle">Scroll</span>
           <div className="w-px h-10" style={{ background: 'linear-gradient(to bottom, #8A7E74, transparent)' }} />
+        </div>
+      </section>
+
+      {/* ── Lifestyle Section ── */}
+      <section className="section bg-fl-base">
+        <div className="max-w-6xl mx-auto">
+
+          {/* Header */}
+          <div className="mb-20">
+            <p className="text-xs font-semibold uppercase tracking-widest text-fl-accent mb-5">
+              The Collection
+            </p>
+            <h2
+              className="font-serif font-semibold text-fl-text leading-tight"
+              style={{ fontSize: 'clamp(2.2rem, 5vw, 3.5rem)' }}
+            >
+              Styled for{' '}
+              <em className="italic font-light">Every Story</em>
+            </h2>
+          </div>
+
+          {/* 3-column model grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {lifestyles.map(item => (
+              <div key={item.id} className="group flex flex-col">
+
+                {/* Image — tall portrait */}
+                <div
+                  className="w-full overflow-hidden mb-8"
+                  style={{ aspectRatio: '3 / 4' }}
+                >
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-[1.04]"
+                    loading="lazy"
+                  />
+                </div>
+
+                {/* Tag */}
+                <p className="text-xs font-semibold uppercase tracking-widest text-fl-accent mb-3">
+                  {item.tag}
+                </p>
+
+                {/* Title */}
+                <h3 className="font-serif text-2xl font-semibold text-fl-text mb-3 leading-snug">
+                  {item.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-sm text-fl-subtle leading-relaxed font-light">
+                  {item.desc}
+                </p>
+
+              </div>
+            ))}
+          </div>
+
+          {/* Subtle CTA below grid */}
+          <div className="mt-16 pt-12 border-t border-fl-muted flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <p className="font-serif text-xl text-fl-text font-light italic">
+              Find your perfect style in our catalogue.
+            </p>
+            <Link to="/catalogue" className="btn-dark shrink-0">
+              View All Designs
+            </Link>
+          </div>
+
         </div>
       </section>
 
