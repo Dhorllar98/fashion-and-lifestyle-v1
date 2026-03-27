@@ -5,22 +5,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50:  '#fdf8f0',
-          100: '#faefd9',
-          200: '#f4d9a8',
-          300: '#ecc06e',
-          400: '#e4a43c',
-          500: '#d4891f',
-          600: '#b86d17',
-          700: '#965316',
-          800: '#794218',
-          900: '#633717',
+        fl: {
+          base:   '#F5F0EB', // page background
+          muted:  '#E8DED3', // secondary background
+          text:   '#2C2420', // primary text
+          subtle: '#8A7E74', // secondary text
+          accent: '#C4928A', // accent / CTA
+          dark:   '#3D3632', // dark anchor / footer
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        serif: ['Playfair Display', 'Georgia', 'serif'],
+        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        sans:  ['Montserrat', 'system-ui', 'sans-serif'],
+      },
+      letterSpacing: {
+        widest2: '0.25em',
+      },
+      transitionDuration: {
+        300: '300ms',
       },
     },
   },

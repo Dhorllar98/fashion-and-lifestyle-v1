@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { Design, Measurement, Order, OrderTrackingResult, CreateOrderPayload } from '@/types'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'http://localhost:5032/api',
   headers: { 'Content-Type': 'application/json' },
 })
 

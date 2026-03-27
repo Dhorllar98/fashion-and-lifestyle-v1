@@ -11,30 +11,48 @@ export default function OrderConfirmation() {
   }, [])
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-20 text-center">
-      <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-        <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-        </svg>
-      </div>
-      <h1 className="text-3xl font-bold text-stone-800 mb-3">Order Placed!</h1>
-      <p className="text-stone-500 mb-6">
-        Thank you for your order. Our team will begin production and you'll receive updates along the way.
-      </p>
-      {orderNumber && (
-        <div className="bg-stone-100 rounded-xl px-6 py-4 mb-8 inline-block">
-          <p className="text-sm text-stone-500 mb-1">Your Order Number</p>
-          <p className="text-2xl font-bold text-brand-700 tracking-widest">{orderNumber}</p>
-          <p className="text-xs text-stone-400 mt-1">Save this to track your order</p>
+    <div className="bg-fl-base min-h-screen flex items-center justify-center px-6 py-28">
+      <div className="max-w-lg w-full text-center">
+        {/* Check mark */}
+        <div className="w-16 h-16 border border-fl-accent flex items-center justify-center mx-auto mb-10">
+          <svg className="w-7 h-7 text-fl-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
         </div>
-      )}
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Link to="/track" className="btn-primary">
-          Track My Order
-        </Link>
-        <Link to="/catalogue" className="btn-secondary">
-          Continue Shopping
-        </Link>
+
+        <p className="text-xs font-semibold uppercase tracking-widest text-fl-accent mb-5">
+          Confirmed
+        </p>
+        <h1 className="font-serif text-5xl font-semibold text-fl-text mb-6">
+          Order Placed
+        </h1>
+        <p className="text-sm text-fl-subtle font-light leading-relaxed mb-12 max-w-sm mx-auto">
+          Thank you. Our team will begin production shortly and you'll receive
+          status updates at every stage.
+        </p>
+
+        {orderNumber && (
+          <div className="bg-fl-muted px-8 py-6 mb-12 inline-block">
+            <p className="text-xs uppercase tracking-widest text-fl-subtle mb-3">
+              Your Order Number
+            </p>
+            <p className="font-serif text-3xl font-semibold text-fl-dark tracking-widest">
+              {orderNumber}
+            </p>
+            <p className="text-xs text-fl-subtle/60 mt-3 font-light">
+              Save this to track your order
+            </p>
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link to="/track" className="btn-primary">
+            Track My Order
+          </Link>
+          <Link to="/catalogue" className="btn-dark">
+            Continue Shopping
+          </Link>
+        </div>
       </div>
     </div>
   )

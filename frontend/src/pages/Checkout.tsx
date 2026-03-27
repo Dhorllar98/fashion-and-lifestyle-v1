@@ -4,7 +4,11 @@ import { ordersApi } from '@/services/api'
 import type { Design } from '@/types'
 
 function formatPrice(amount: number) {
-  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(amount)
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    maximumFractionDigits: 0,
+  }).format(amount)
 }
 
 export default function Checkout() {
@@ -29,7 +33,7 @@ export default function Checkout() {
     setError('')
     try {
       const order = await ordersApi.create({
-        clientName: '',   // will be filled from measurement in v2
+        clientName: '',
         clientEmail: '',
         clientPhone,
         designId: design.id,
@@ -52,53 +56,73 @@ export default function Checkout() {
   if (!design) return null
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold text-stone-800 mb-2">Order Summary</h1>
-      <p className="text-stone-500 mb-8">Review your order before placing it.</p>
+    <div className="bg-fl-base min-h-screen pt-28">
+      <div className="max-w-2xl mx-auto px-6 md:px-12 lg:px-20 pb-28">
+        {/* Header */}
+        <div className="mb-16">
+          <p className="text-xs font-semibold uppercase tracking-widest text-fl-accent mb-4">
+            Step 3 of 3
+          </p>
+          <h1 className="font-serif text-5xl md:text-6xl font-semibold text-fl-text">
+            Order Summary
+          </h1>
+        </div>
 
-      <div className="card p-6 mb-8 space-y-4">
-        <div className="flex justify-between items-start">
-          <div>
-            <p className="font-semibold text-stone-800">{design.name}</p>
-            <p className="text-sm text-stone-500">{design.selectedColor} · {design.selectedFabric}</p>
+        {/* Order item */}
+        <div className="border-t border-b border-fl-muted py-8 mb-12">
+          <div className="flex justify-between items-start gap-6">
+            <div>
+              <p className="font-serif text-xl font-semibold text-fl-text mb-1">{design.name}</p>
+              <p className="text-xs uppercase tracking-widest text-fl-subtle">
+                {design.selectedColor} &nbsp;·&nbsp; {design.selectedFabric}
+              </p>
+            </div>
+            <p className="font-serif text-xl font-semibold text-fl-text whitespace-nowrap">
+              {formatPrice(design.price)}
+            </p>
           </div>
-          <p className="font-bold text-stone-800">{formatPrice(design.price)}</p>
+          <div className="flex justify-between items-center mt-8 pt-8 border-t border-fl-muted">
+            <span className="text-xs uppercase tracking-widest text-fl-subtle">Total</span>
+            <span className="font-serif text-2xl font-semibold text-fl-text">
+              {formatPrice(design.price)}
+            </span>
+          </div>
         </div>
-        <hr className="border-stone-100" />
-        <div className="flex justify-between">
-          <span className="font-semibold text-stone-700">Total</span>
-          <span className="font-bold text-xl text-stone-800">{formatPrice(design.price)}</span>
-        </div>
-      </div>
 
-      {/* Payment — placeholder for v1 */}
-      <div className="card p-6 mb-8">
-        <h2 className="font-semibold text-stone-800 mb-1">Payment</h2>
-        <p className="text-sm text-stone-500 mb-4">
-          Payment integration (Paystack / Flutterwave) will be wired in v2. For now, orders are placed and payment is collected manually.
-        </p>
-        <div className="bg-brand-50 border border-brand-200 rounded-lg px-4 py-3 text-sm text-brand-800">
-          You will receive a payment invoice via email after placing your order.
+        {/* Payment notice */}
+        <div className="bg-fl-muted px-6 py-5 mb-12 border-l-2 border-fl-accent">
+          <p className="text-xs uppercase tracking-widest text-fl-accent mb-2">Payment</p>
+          <p className="text-sm text-fl-subtle font-light leading-relaxed">
+            Payment integration (Paystack / Flutterwave) arrives in v1.1.
+            A payment invoice will be sent to your email after placing this order.
+          </p>
         </div>
-      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-stone-700 mb-1">Phone Number</label>
-          <input
-            type="tel"
-            value={clientPhone}
-            onChange={e => setClientPhone(e.target.value)}
-            required
-            className="input-field"
-            placeholder="+234 800 000 0000"
-          />
-        </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button type="submit" disabled={loading} className="btn-primary w-full">
-          {loading ? 'Placing Order...' : 'Place Order'}
-        </button>
-      </form>
+        {/* Phone & submit */}
+        <form onSubmit={handleSubmit} className="space-y-10">
+          <div>
+            <label className="block text-xs uppercase tracking-widest text-fl-subtle mb-3">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              value={clientPhone}
+              onChange={e => setClientPhone(e.target.value)}
+              required
+              className="input-field"
+              placeholder="+234 800 000 0000"
+            />
+          </div>
+
+          {error && (
+            <p className="text-red-400 text-xs uppercase tracking-widest">{error}</p>
+          )}
+
+          <button type="submit" disabled={loading} className="btn-primary w-full text-center">
+            {loading ? 'Placing Order…' : 'Place Order'}
+          </button>
+        </form>
+      </div>
     </div>
   )
 }

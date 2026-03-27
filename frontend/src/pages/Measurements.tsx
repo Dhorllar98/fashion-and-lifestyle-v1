@@ -13,13 +13,13 @@ const initialForm: FormData = {
 }
 
 const measurementFields: { key: keyof FormData; label: string }[] = [
-  { key: 'chest', label: 'Chest (cm)' },
-  { key: 'waist', label: 'Waist (cm)' },
-  { key: 'hips', label: 'Hips (cm)' },
-  { key: 'shoulderWidth', label: 'Shoulder Width (cm)' },
-  { key: 'sleeveLength', label: 'Sleeve Length (cm)' },
-  { key: 'inseamLength', label: 'Inseam Length (cm)' },
-  { key: 'height', label: 'Height (cm)' },
+  { key: 'chest', label: 'Chest' },
+  { key: 'waist', label: 'Waist' },
+  { key: 'hips', label: 'Hips' },
+  { key: 'shoulderWidth', label: 'Shoulder Width' },
+  { key: 'sleeveLength', label: 'Sleeve Length' },
+  { key: 'inseamLength', label: 'Inseam Length' },
+  { key: 'height', label: 'Height' },
 ]
 
 export default function Measurements() {
@@ -49,59 +49,114 @@ export default function Measurements() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold text-stone-800 mb-2">Your Measurements</h1>
-      <p className="text-stone-500 mb-8">Provide your measurements in centimetres for a perfectly tailored fit.</p>
+    <div className="bg-fl-base min-h-screen pt-28">
+      <div className="max-w-5xl mx-auto px-6 md:px-12 lg:px-20 pb-28">
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-stone-700 mb-1">Full Name</label>
-            <input name="clientName" value={form.clientName} onChange={handleChange} required className="input-field" placeholder="John Doe" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-stone-700 mb-1">Email Address</label>
-            <input name="clientEmail" type="email" value={form.clientEmail} onChange={handleChange} required className="input-field" placeholder="john@example.com" />
-          </div>
+        {/* Header */}
+        <div className="mb-16">
+          <p className="text-xs font-semibold uppercase tracking-widest text-fl-accent mb-4">
+            Step 2 of 3
+          </p>
+          <h1 className="font-serif text-5xl md:text-6xl font-semibold text-fl-text mb-5">
+            Your Measurements
+          </h1>
+          <p className="text-sm text-fl-subtle font-light max-w-md leading-relaxed">
+            All measurements are in centimetres. Take each measurement over fitted clothing
+            for the most accurate result.
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          {measurementFields.map(({ key, label }) => (
-            <div key={key}>
-              <label className="block text-sm font-medium text-stone-700 mb-1">{label}</label>
-              <input
-                name={key}
-                type="number"
-                min="0"
-                step="0.5"
-                value={form[key] as number || ''}
-                onChange={handleChange}
-                required
-                className="input-field"
-                placeholder="0"
-              />
+        <form onSubmit={handleSubmit}>
+          {/* Client info */}
+          <div className="mb-16">
+            <p className="text-xs font-semibold uppercase tracking-widest text-fl-text mb-10">
+              Your Details
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10">
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-fl-subtle mb-3">
+                  Full Name
+                </label>
+                <input
+                  name="clientName"
+                  value={form.clientName}
+                  onChange={handleChange}
+                  required
+                  className="input-field"
+                  placeholder="John Doe"
+                />
+              </div>
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-fl-subtle mb-3">
+                  Email Address
+                </label>
+                <input
+                  name="clientEmail"
+                  type="email"
+                  value={form.clientEmail}
+                  onChange={handleChange}
+                  required
+                  className="input-field"
+                  placeholder="john@example.com"
+                />
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium text-stone-700 mb-1">Additional Notes (optional)</label>
-          <textarea
-            name="notes"
-            value={form.notes}
-            onChange={handleChange}
-            rows={3}
-            className="input-field resize-none"
-            placeholder="Any special requirements or preferences..."
-          />
-        </div>
+          {/* Measurement fields */}
+          <div className="mb-16">
+            <p className="text-xs font-semibold uppercase tracking-widest text-fl-text mb-10">
+              Body Measurements <span className="text-fl-subtle font-light normal-case tracking-normal ml-2">(cm)</span>
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-12 gap-y-10">
+              {measurementFields.map(({ key, label }) => (
+                <div key={key}>
+                  <label className="block text-xs uppercase tracking-widest text-fl-subtle mb-3">
+                    {label}
+                  </label>
+                  <input
+                    name={key}
+                    type="number"
+                    min="0"
+                    step="0.5"
+                    value={(form[key] as number) || ''}
+                    onChange={handleChange}
+                    required
+                    className="input-field"
+                    placeholder="0"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+          {/* Notes */}
+          <div className="mb-16">
+            <label className="block text-xs uppercase tracking-widest text-fl-subtle mb-3">
+              Additional Notes <span className="normal-case tracking-normal text-fl-subtle/60 ml-1">(optional)</span>
+            </label>
+            <textarea
+              name="notes"
+              value={form.notes}
+              onChange={handleChange}
+              rows={3}
+              className="input-field resize-none"
+              placeholder="Any special requirements or preferences…"
+            />
+          </div>
 
-        <button type="submit" disabled={loading} className="btn-primary w-full">
-          {loading ? 'Saving...' : 'Continue to Checkout →'}
-        </button>
-      </form>
+          {error && (
+            <p className="text-red-400 text-xs uppercase tracking-widest mb-8">{error}</p>
+          )}
+
+          <div className="flex items-center gap-8">
+            <button type="submit" disabled={loading} className="btn-primary">
+              {loading ? 'Saving…' : 'Continue to Checkout'}
+            </button>
+            <span className="text-xs text-fl-subtle font-light">Step 2 of 3</span>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }
