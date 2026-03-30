@@ -122,6 +122,16 @@ public class OrderService : IOrderService
         return Task.FromResult<IEnumerable<Order>>(orders);
     }
 
+    public Task<IEnumerable<Order>> GetAllOrdersAsync()
+    {
+        var orders = _store.Orders
+            .Where(o => !o.IsDeleted)
+            .OrderByDescending(o => o.CreatedAt)
+            .ToList();
+
+        return Task.FromResult<IEnumerable<Order>>(orders);
+    }
+
     private static void Validate(CreateOrderRequest r)
     {
         var errors = new List<string>();

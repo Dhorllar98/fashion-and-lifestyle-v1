@@ -9,10 +9,11 @@ import type {
   Order,
   OrderTrackingResult,
   RegisterPayload,
+  UpdateStatusPayload,
 } from '@/types'
 
 const api = axios.create({
-  baseURL: 'http://localhost:5032/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5032/api',
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -76,6 +77,14 @@ export const ordersApi = {
     api.get<Order>(`/orders/${id}`).then(r => r.data),
   track: (orderNumber: string) =>
     api.get<OrderTrackingResult>(`/orders/track/${orderNumber}`).then(r => r.data),
+}
+
+// ── Admin ──────────────────────────────────────────────────────────────────────
+export const adminApi = {
+  getAllOrders: () =>
+    api.get<Order[]>('/orders').then(r => r.data),
+  updateStatus: (id: number, payload: UpdateStatusPayload) =>
+    api.patch<Order>(`/orders/${id}/status`, payload).then(r => r.data),
 }
 
 export default api

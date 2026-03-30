@@ -18,6 +18,14 @@ public class OrdersController : ControllerBase
 
     public OrdersController(IOrderService orderService) => _orderService = orderService;
 
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAll()
+    {
+        var orders = await _orderService.GetAllOrdersAsync();
+        return Ok(new OkResponse<IEnumerable<Order>>(orders));
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateOrderRequest request)
     {

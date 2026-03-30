@@ -91,6 +91,11 @@ export interface CreateOrderPayload {
   quantity: number
 }
 
+export interface UpdateStatusPayload {
+  status: OrderStatus
+  note?: string
+}
+
 // ── Auth ───────────────────────────────────────────────────────────────────────
 export interface RegisterPayload {
   fullName: string

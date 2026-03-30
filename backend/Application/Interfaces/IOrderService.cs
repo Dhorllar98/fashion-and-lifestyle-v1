@@ -11,4 +11,5 @@ public interface IOrderService
     Task<OrderTrackingResponse> TrackOrderAsync(string orderNumber);
     Task<Order> UpdateOrderStatusAsync(int id, OrderStatus status, string? note = null);
     Task<IEnumerable<Order>> GetOrdersByEmailAsync(string email);
+    Task<IEnumerable<Order>> GetAllOrdersAsync();
 }
