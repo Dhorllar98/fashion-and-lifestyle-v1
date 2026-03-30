@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: fashion-lifestyle-api
+    env: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: .
+    port: 8080
+    healthCheckPath: /swagger
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:8080
+      - key: JWT_SECRET_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
