@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ordersApi } from '@/services/api'
-import { getUser, isLoggedIn } from '@/lib/auth'
+import { getUser } from '@/lib/auth'
 import type { Design } from '@/types'
 
 function formatPrice(amount: number) {
@@ -20,11 +20,8 @@ export default function Checkout() {
   const [error,       setError]       = useState('')
 
   useEffect(() => {
-    if (!isLoggedIn()) {
-      navigate('/register', { replace: true })
-      return
-    }
-    const raw          = sessionStorage.getItem('selectedDesign')
+    // RequireAuth guarantees user is logged in — just read sessionStorage
+    const raw           = sessionStorage.getItem('selectedDesign')
     const measurementId = sessionStorage.getItem('measurementId')
     if (!raw || !measurementId) { navigate('/catalogue'); return }
     setDesign(JSON.parse(raw))

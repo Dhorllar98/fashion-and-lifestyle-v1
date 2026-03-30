@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from '@/components/shared/Navbar'
 import Footer from '@/components/shared/Footer'
+import RequireAuth from '@/components/shared/RequireAuth'
 import Home from '@/pages/Home'
 import Catalogue from '@/pages/Catalogue'
 import DesignDetail from '@/pages/DesignDetail'
@@ -18,15 +19,20 @@ function App() {
         <Navbar />
         <main className="flex-1">
           <Routes>
-            <Route path="/"                   element={<Home />} />
-            <Route path="/catalogue"          element={<Catalogue />} />
-            <Route path="/catalogue/:id"      element={<DesignDetail />} />
-            <Route path="/measurements"       element={<Measurements />} />
-            <Route path="/checkout"           element={<Checkout />} />
-            <Route path="/order-confirmation" element={<OrderConfirmation />} />
-            <Route path="/track"              element={<OrderTracking />} />
-            <Route path="/register"           element={<Register />} />
-            <Route path="/login"              element={<Login />} />
+            {/* Public routes */}
+            <Route path="/"      element={<Home />} />
+            <Route path="/track" element={<OrderTracking />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login"    element={<Login />} />
+
+            {/* Protected routes — redirect to /login if no JWT */}
+            <Route element={<RequireAuth />}>
+              <Route path="/catalogue"          element={<Catalogue />} />
+              <Route path="/catalogue/:id"      element={<DesignDetail />} />
+              <Route path="/measurements"       element={<Measurements />} />
+              <Route path="/checkout"           element={<Checkout />} />
+              <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            </Route>
           </Routes>
         </main>
         <Footer />

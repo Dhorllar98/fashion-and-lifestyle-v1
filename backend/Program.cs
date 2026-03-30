@@ -100,7 +100,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Skip HTTPS redirect in Development — the 307 redirect causes browsers to strip
+// the Authorization header before it reaches the JWT middleware, producing a 401
+// on any authenticated endpoint even when the token is present and valid.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors("FrontendPolicy");
 app.UseAuthentication();
 app.UseAuthorization();

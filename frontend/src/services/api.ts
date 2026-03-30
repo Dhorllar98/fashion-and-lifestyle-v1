@@ -19,7 +19,7 @@ const api = axios.create({
 // ── Request interceptor — attach JWT when available ────────────────────────────
 api.interceptors.request.use(config => {
   const token = getToken()
-  if (token) config.headers.Authorization = `Bearer ${token}`
+  if (token) config.headers.set('Authorization', `Bearer ${token}`)
   return config
 })
 
@@ -34,7 +34,6 @@ api.interceptors.response.use(
     return response
   },
   error => {
-    // Pull the exact message the backend sent
     const message: string =
       error.response?.data?.message ||
       error.message ||
@@ -71,12 +70,12 @@ export const measurementsApi = {
 export const ordersApi = {
   create: (data: CreateOrderPayload) =>
     api.post<Order>('/orders', data).then(r => r.data),
+  myOrders: () =>
+    api.get<Order[]>('/orders/my-orders').then(r => r.data),
   getById: (id: number) =>
     api.get<Order>(`/orders/${id}`).then(r => r.data),
   track: (orderNumber: string) =>
     api.get<OrderTrackingResult>(`/orders/track/${orderNumber}`).then(r => r.data),
-  getByEmail: (email: string) =>
-    api.get<Order[]>(`/orders/client/${email}`).then(r => r.data),
 }
 
 export default api

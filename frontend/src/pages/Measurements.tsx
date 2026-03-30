@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { measurementsApi } from '@/services/api'
-import { getUser, isLoggedIn } from '@/lib/auth'
+import { getUser } from '@/lib/auth'
 import type { Measurement } from '@/types'
 
 type FormData = Omit<Measurement, 'id' | 'submittedAt'>
@@ -30,17 +30,12 @@ export default function Measurements() {
   const [error, setError]     = useState('')
 
   useEffect(() => {
-    // Guard: must be logged in to submit measurements
-    if (!isLoggedIn()) {
-      navigate('/register', { replace: true })
-      return
-    }
-    // Pre-fill contact info from auth
+    // Pre-fill contact info from JWT — RequireAuth guarantees user is logged in
     const user = getUser()
     if (user) {
       setForm(f => ({ ...f, clientName: user.fullName, clientEmail: user.email }))
     }
-  }, [navigate])
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

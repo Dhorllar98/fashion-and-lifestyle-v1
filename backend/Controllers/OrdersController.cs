@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using FashionLifestyle.API.Application.Common.Responses;
 using FashionLifestyle.API.Application.DTOs.Orders;
 using FashionLifestyle.API.Application.Interfaces;
 using FashionLifestyle.API.Domain.Entities;
+using FashionLifestyle.API.Domain.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,6 +39,17 @@ public class OrdersController : ControllerBase
     {
         var tracking = await _orderService.TrackOrderAsync(orderNumber);
         return Ok(new OkResponse<OrderTrackingResponse>(tracking));
+    }
+
+    [HttpGet("my-orders")]
+    public async Task<IActionResult> GetMyOrders()
+    {
+        var email = User.FindFirstValue(ClaimTypes.Email)
+            ?? User.FindFirstValue("email")
+            ?? throw new UnauthorizedException("User identity could not be determined.");
+
+        var orders = await _orderService.GetOrdersByEmailAsync(email);
+        return Ok(new OkResponse<IEnumerable<Order>>(orders));
     }
 
     [HttpGet("client/{email}")]
