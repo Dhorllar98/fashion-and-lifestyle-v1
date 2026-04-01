@@ -84,12 +84,20 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <Link
-                to="/register"
-                className="text-xs font-semibold uppercase tracking-widest px-6 py-3 transition-all duration-300 bg-fl-accent text-white hover:bg-fl-dark"
-              >
-                Register
-              </Link>
+              <div className="flex items-center gap-4">
+                <Link
+                  to="/login"
+                  className="text-xs font-semibold uppercase tracking-widest text-fl-subtle hover:text-fl-text transition-colors duration-300"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="text-xs font-semibold uppercase tracking-widest px-6 py-3 transition-all duration-300 bg-fl-accent text-white hover:bg-fl-dark"
+                >
+                  Register
+                </Link>
+              </div>
             )}
           </div>
 
@@ -141,13 +149,22 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <Link
-              to="/register"
-              onClick={() => setOpen(false)}
-              className="btn-primary block text-center"
-            >
-              Register
-            </Link>
+            <>
+              <Link
+                to="/login"
+                onClick={() => setOpen(false)}
+                className="block text-xs font-semibold uppercase tracking-widest text-fl-subtle hover:text-fl-accent transition-colors"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                onClick={() => setOpen(false)}
+                className="btn-primary block text-center"
+              >
+                Register
+              </Link>
+            </>
           )}
         </div>
       </div>
