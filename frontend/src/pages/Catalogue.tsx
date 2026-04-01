@@ -68,17 +68,29 @@ export default function Catalogue() {
 
       {/* Status */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-20">
-        {loading && (
-          <p className="text-fl-subtle text-sm py-20 text-center tracking-wide">
-            Loading collection…
-          </p>
-        )}
         {error && (
           <p className="text-red-400 text-sm py-20 text-center">{error}</p>
         )}
 
+        {/* Skeleton grid — shown while loading */}
+        {loading && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-fl-muted mb-24">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-fl-base overflow-hidden">
+                <div className="aspect-[3/4] bg-fl-muted animate-pulse" />
+                <div className="p-6 space-y-3">
+                  <div className="h-2.5 w-16 bg-fl-muted animate-pulse rounded-sm" />
+                  <div className="h-4 w-3/4 bg-fl-muted animate-pulse rounded-sm" />
+                  <div className="h-3 w-full bg-fl-muted animate-pulse rounded-sm mt-3" />
+                  <div className="h-3 w-5/6 bg-fl-muted animate-pulse rounded-sm" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* 3-column portrait grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-fl-muted mb-24">
+        {!loading && <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-fl-muted mb-24">
           {filtered.map(design => (
             <Link
               key={design.id}
@@ -139,7 +151,7 @@ export default function Catalogue() {
               </div>
             </Link>
           ))}
-        </div>
+        </div>}
       </div>
     </div>
   )

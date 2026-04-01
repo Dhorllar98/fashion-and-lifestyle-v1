@@ -1,20 +1,22 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'
 import Navbar from '@/components/shared/Navbar'
 import Footer from '@/components/shared/Footer'
-import RequireAuth  from '@/components/shared/RequireAuth'
-import RequireAdmin from '@/components/shared/RequireAdmin'
+import RequireAuth   from '@/components/shared/RequireAuth'
+import RequireAdmin  from '@/components/shared/RequireAdmin'
+import ErrorBoundary from '@/components/shared/ErrorBoundary'
 
-import Home             from '@/pages/Home'
-import Catalogue        from '@/pages/Catalogue'
-import DesignDetail     from '@/pages/DesignDetail'
-import Measurements     from '@/pages/Measurements'
-import Checkout         from '@/pages/Checkout'
-import OrderTracking    from '@/pages/OrderTracking'
+import Home              from '@/pages/Home'
+import Catalogue         from '@/pages/Catalogue'
+import DesignDetail      from '@/pages/DesignDetail'
+import Measurements      from '@/pages/Measurements'
+import Checkout          from '@/pages/Checkout'
+import OrderTracking     from '@/pages/OrderTracking'
 import OrderConfirmation from '@/pages/OrderConfirmation'
-import Register         from '@/pages/Register'
-import Login            from '@/pages/Login'
-import AdminLogin       from '@/pages/admin/AdminLogin'
-import AdminDashboard   from '@/pages/admin/AdminDashboard'
+import Register          from '@/pages/Register'
+import Login             from '@/pages/Login'
+import NotFound          from '@/pages/NotFound'
+import AdminLogin        from '@/pages/admin/AdminLogin'
+import AdminDashboard    from '@/pages/admin/AdminDashboard'
 
 // Client-facing layout — includes Navbar + Footer
 function MainLayout() {
@@ -32,6 +34,7 @@ function MainLayout() {
 function App() {
   return (
     <BrowserRouter>
+      <ErrorBoundary>
       <Routes>
 
         {/* ── Admin routes — no Navbar/Footer ────────────────────────────── */}
@@ -58,7 +61,9 @@ function App() {
           </Route>
         </Route>
 
+        <Route path="*" element={<NotFound />} />
       </Routes>
+      </ErrorBoundary>
     </BrowserRouter>
   )
 }

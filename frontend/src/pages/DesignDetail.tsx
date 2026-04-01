@@ -51,12 +51,12 @@ export default function DesignDetail() {
     <div className="bg-fl-base min-h-screen pt-24">
       <div className="max-w-6xl mx-auto px-6 md:px-12 lg:px-20 pb-28">
         {/* Back link */}
-        <button
-          onClick={() => navigate(-1)}
+        <Link
+          to="/catalogue"
           className="text-xs uppercase tracking-widest text-fl-subtle hover:text-fl-accent transition-colors duration-300 flex items-center gap-2 mb-14"
         >
           ← Back to Catalogue
-        </button>
+        </Link>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-24">
           {/* Image */}
