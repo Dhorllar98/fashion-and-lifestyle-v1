@@ -1,12 +1,14 @@
 using FashionLifestyle.API.Application.Common.Responses;
 using FashionLifestyle.API.Application.Interfaces;
 using FashionLifestyle.API.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FashionLifestyle.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[AllowAnonymous]
 public class CatalogueController : ControllerBase
 {
     private readonly ICatalogueService _catalogueService;

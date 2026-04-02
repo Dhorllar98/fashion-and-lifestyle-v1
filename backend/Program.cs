@@ -66,7 +66,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 // ── CORS — env var takes priority (set CORS_ORIGINS in production) ────────────
 var corsOrigins = (Environment.GetEnvironmentVariable("CORS_ORIGINS")
-    ?? "http://localhost:5173,http://localhost:3000")
+    ?? "http://localhost:5173,http://localhost:3000,https://fashion-and-lifestyle-v1.vercel.app")
     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
 builder.Services.AddCors(options =>
